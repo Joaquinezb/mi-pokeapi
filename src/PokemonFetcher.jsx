@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './PokemonFetcher.css';
 
+// Cantidades preseleccionadas para el selector de cantidad 
 const cantidadesPreseleccionadas = [4, 6, 8, 10, 12, 16, 22, 28, 34];
 
 const PokemonFetcher = () => {
+  // Estados principales del componente 
   const [pokemones, setPokemones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [filtroTipo, setFiltroTipo] = useState('');
-  const [cantidad, setCantidad] = useState(6); // Nuevo estado para la cantidad
+  const [cantidad, setCantidad] = useState(6); // Cantidad de Pokémon a mostrar
 
+  // Efecto para obtener los Pokémon cada vez que cambia la cantidad 
   useEffect(() => {
     const fetchPokemones = async () => {
       try {
@@ -18,7 +21,7 @@ const PokemonFetcher = () => {
         const fetchedPokemones = [];
         const pokemonIds = new Set();
 
-        // Generar IDs únicos según la cantidad seleccionada
+        // Genera IDs únicos aleatorios según la cantidad seleccionada 
         while (pokemonIds.size < cantidad) {
           const randomId = Math.floor(Math.random() * 898) + 1;
           pokemonIds.add(randomId);
@@ -26,6 +29,7 @@ const PokemonFetcher = () => {
 
         const idsArray = Array.from(pokemonIds);
 
+        // Obtiene los datos de cada Pokémon por su ID 
         for (const id of idsArray) {
           const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/`);
           if (!response.ok) {
@@ -48,8 +52,9 @@ const PokemonFetcher = () => {
     };
 
     fetchPokemones();
-  }, [cantidad]); // Ahora depende de la cantidad seleccionada
+  }, [cantidad]); // El efecto depende de la cantidad seleccionada
 
+  // Renderizado condicional para mostrar carga o error 
   if (cargando) {
     return <div className="pokemon-container">Cargando Pokémon...</div>;
   }
@@ -58,9 +63,11 @@ const PokemonFetcher = () => {
     return <div className="pokemon-container error">Error: {error}</div>;
   }
 
+  // Render principal del componente 
   return (
     <div className='pokemon-container'>
       <h2>Tus {cantidad} Pokémon Aleatorios</h2>
+      {/* Barra de búsqueda y selector de cantidad */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '20px' }}>
         <input
           type="text"
@@ -79,6 +86,7 @@ const PokemonFetcher = () => {
           ))}
         </select>
       </div>
+      {/* Lista de Pokémon filtrados por tipo */}
       <div className="pokemon-list">
         {pokemones
           .filter(pokemon =>
