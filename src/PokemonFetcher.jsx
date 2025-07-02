@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import './PokemonFetcher.css'; // Opcional: para estilos básicos
+import './PokemonFetcher.css';
+
+const cantidadesPreseleccionadas = [4, 6, 8, 10, 12, 16, 22, 28, 34];
 
 const PokemonFetcher = () => {
   const [pokemones, setPokemones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
-  const [filtroTipo, setFiltroTipo] = useState(''); // Nuevo estado para el filtro
+  const [filtroTipo, setFiltroTipo] = useState('');
+  const [cantidad, setCantidad] = useState(6); // Nuevo estado para la cantidad
 
   useEffect(() => {
     const fetchPokemones = async () => {
@@ -13,15 +16,14 @@ const PokemonFetcher = () => {
         setCargando(true);
         setError(null);
         const fetchedPokemones = [];
-        const pokemonIds = new Set(); // Usar un Set para asegurar IDs únicos
+        const pokemonIds = new Set();
 
-        // Generar 6 IDs de Pokémon únicos aleatorios
-        while (pokemonIds.size < 6) {
-          const randomId = Math.floor(Math.random() * 898) + 1; // 898 es el número actual de Pokémon en la PokeAPI (puedes ajustarlo)
+        // Generar IDs únicos según la cantidad seleccionada
+        while (pokemonIds.size < cantidad) {
+          const randomId = Math.floor(Math.random() * 898) + 1;
           pokemonIds.add(randomId);
         }
 
-        // Convertir el Set a un array para iterar
         const idsArray = Array.from(pokemonIds);
 
         for (const id of idsArray) {
@@ -46,7 +48,7 @@ const PokemonFetcher = () => {
     };
 
     fetchPokemones();
-  }, []); // El array vacío asegura que se ejecute solo una vez al montar el componente
+  }, [cantidad]); // Ahora depende de la cantidad seleccionada
 
   if (cargando) {
     return <div className="pokemon-container">Cargando Pokémon...</div>;
@@ -58,15 +60,26 @@ const PokemonFetcher = () => {
 
   return (
     <div className='pokemon-container'>
-      <h2>Tus 6 Pokémon Aleatorios</h2>
-      <input
-        type="text"
-        placeholder="Filtrar por tipo (ej: fire, water)"
-        value={filtroTipo}
-        onChange={e => setFiltroTipo(e.target.value)}
-        style={{ marginBottom: '20px', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
-      />
-      <div className="pokemon-list"> 
+      <h2>Tus {cantidad} Pokémon Aleatorios</h2>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Filtrar por tipo (ej: fire, water)"
+          value={filtroTipo}
+          onChange={e => setFiltroTipo(e.target.value)}
+          style={{ padding: '8px', borderRadius: '5px', border: '1px solid #ccc', minWidth: '180px' }}
+        />
+        <select
+          value={cantidad}
+          onChange={e => setCantidad(Number(e.target.value))}
+          style={{ padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
+        >
+          {cantidadesPreseleccionadas.map(num => (
+            <option key={num} value={num}>{num} Pokémon</option>
+          ))}
+        </select>
+      </div>
+      <div className="pokemon-list">
         {pokemones
           .filter(pokemon =>
             filtroTipo === '' ||
