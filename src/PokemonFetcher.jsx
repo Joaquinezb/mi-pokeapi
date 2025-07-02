@@ -94,16 +94,30 @@ const PokemonFetcher = () => {
             pokemon.tipos.some(tipo =>
               tipo.toLowerCase().includes(filtroTipo.toLowerCase())
             )
-          )
-          .map(pokemon => (
-            <div key={pokemon.id} className="pokemon-card">
-              <h3>{pokemon.nombre.charAt(0).toUpperCase() + pokemon.nombre.slice(1)}</h3>
-              <img src={pokemon.imagen} alt={pokemon.nombre} />
-              <p>
-                <strong>Tipos:</strong> {pokemon.tipos.map(type => type.charAt(0).toUpperCase() + type.slice(1)).join(', ')}
-              </p>
+          ).length === 0 ? (
+            // Si no hay resultados, muestra un mensaje
+            <div style={{ color: '#fff', fontSize: '1.2em', marginTop: '40px' }}>
+              No se encontraron Pokémon con ese filtro.
             </div>
-          ))}
+          ) : (
+            pokemones
+              .filter(pokemon =>
+                filtroTipo === '' ||
+                pokemon.tipos.some(tipo =>
+                  tipo.toLowerCase().includes(filtroTipo.toLowerCase())
+                )
+              )
+              .map(pokemon => (
+                <div key={pokemon.id} className="pokemon-card">
+                  <h3>{pokemon.nombre.charAt(0).toUpperCase() + pokemon.nombre.slice(1)}</h3>
+                  <img src={pokemon.imagen} alt={pokemon.nombre} />
+                  <p>
+                    <strong>Tipos:</strong> {pokemon.tipos.map(type => type.charAt(0).toUpperCase() + type.slice(1)).join(', ')}
+                  </p>
+                </div>
+              ))
+          )
+        }
       </div>
     </div>
   );
