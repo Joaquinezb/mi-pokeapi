@@ -4,7 +4,7 @@ import PokemonFetcher from './PokemonFetcher';
 function App() {
   return (
     <>
-      <h1>conoce a tus pokemones</h1>
+      <h1>¡Conoce a tu equipo Pokémon.¡</h1>
        <PokemonFetcher />
     </>
   );

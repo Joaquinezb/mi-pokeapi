@@ -5,7 +5,9 @@ const PokemonFetcher = () => {
   const [pokemones, setPokemones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
-useEffect(() => {
+  const [filtroTipo, setFiltroTipo] = useState(''); // Nuevo estado para el filtro
+
+  useEffect(() => {
     const fetchPokemones = async () => {
       try {
         setCargando(true);
@@ -57,16 +59,30 @@ useEffect(() => {
   return (
     <div className='pokemon-container'>
       <h2>Tus 6 Pokémon Aleatorios</h2>
+      <input
+        type="text"
+        placeholder="Filtrar por tipo (ej: fire, water)"
+        value={filtroTipo}
+        onChange={e => setFiltroTipo(e.target.value)}
+        style={{ marginBottom: '20px', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
+      />
       <div className="pokemon-list"> 
-        {pokemones.map(pokemon => (
-          <div key={pokemon.id} className="pokemon-card">
-            <h3>{pokemon.nombre.charAt(0).toUpperCase() + pokemon.nombre.slice(1)}</h3>
-            <img src={pokemon.imagen} alt={pokemon.nombre} />
-            <p>
-              **Tipos:** {pokemon.tipos.map(type => type.charAt(0).toUpperCase() + type.slice(1)).join(', ')}
-            </p>
-          </div>
-        ))}
+        {pokemones
+          .filter(pokemon =>
+            filtroTipo === '' ||
+            pokemon.tipos.some(tipo =>
+              tipo.toLowerCase().includes(filtroTipo.toLowerCase())
+            )
+          )
+          .map(pokemon => (
+            <div key={pokemon.id} className="pokemon-card">
+              <h3>{pokemon.nombre.charAt(0).toUpperCase() + pokemon.nombre.slice(1)}</h3>
+              <img src={pokemon.imagen} alt={pokemon.nombre} />
+              <p>
+                <strong>Tipos:</strong> {pokemon.tipos.map(type => type.charAt(0).toUpperCase() + type.slice(1)).join(', ')}
+              </p>
+            </div>
+          ))}
       </div>
     </div>
   );
